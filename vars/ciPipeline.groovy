@@ -1,6 +1,8 @@
 def call(Map config = [:]) {
     pipeline {
-        agent any
+        agent {
+            label 'windows_2'
+        }
 
         parameters {
             string(name: 'TARGET', defaultValue: 'World', description: 'Who to greet')
