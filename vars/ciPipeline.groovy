@@ -1,13 +1,4 @@
 def call(Map config = [:]) {
-        agent {
-            label 'windows'
-        }
-
-        parameters {
-            string(name: 'TARGET', defaultValue: 'World', description: 'Who to greet')
-            string(name: 'ENVIRONMENT', defaultValue: 'staging', description: 'Deployment environment')
-        }
-
         stages {
             stage('Checkout Repos') {
                 steps {
@@ -33,15 +24,18 @@ def call(Map config = [:]) {
                 steps {
                     echo "Doing your custom build for ${params.TARGET}"
                 }
-            }
-        }
+            }  
 
-        post {
-            always {
-                script {
-                    def reportGen = new org.example.ci.ReportGenerator(this)
-                    reportGen.generateTxtReport(params)
-                    archiveArtifacts artifacts: 'ci_report.txt', fingerprint: true
+            stage('Generate Report and Archive') {
+                steps {
+                    script {
+                        // 確保 org.example.ci.ReportGenerator 類存在於你的共享庫的 'src/' 目錄中
+                        def reportGen = new org.example.ci.ReportGenerator(this)
+                        reportGen.generateTxtReport(params) // 傳遞 params 給報告生成器
+
+                        // archiveArtifacts 是一個標準 Jenkins 步驟，可以在 steps 區塊內使用
+                        archiveArtifacts artifacts: 'ci_report.txt', fingerprint: true
+                    }
                 }
             }
         }
