@@ -20,13 +20,14 @@ class GitHelper implements Serializable {
         reposConfig.eachWithIndex { repo, index ->
             script.echo "--- Processing Repository ${index + 1} ---"
             def repoUrl = repo.url
-            def repoBranch = repo.branch ?: 'main' // 默認分支為 'main'
-            def repoTargetDir = repo.targetDir // 目標資料夾可能為 null
-            def credentialsId = repo.credentialsId // 憑證 ID 可能為 null
+            def repoBranch = repo.branch ?: 'master' 
+            def repoTargetDir = repo.targetDir
+            def credentialsId = repo.credentialsId
+            def needPoll = repo.need_poll ?: false
 
             if (!repoUrl) {
                 script.echo "Skipping repository ${index + 1}: URL is missing."
-                return // 跳過當前循環
+                return
             }
 
             script.echo "Repository URL: ${repoUrl}"
@@ -45,17 +46,22 @@ class GitHelper implements Serializable {
                 gitCommandParams.userRemoteConfigs[0].credentialsId = credentialsId
             }
 
-            // 如果指定了目標資料夾，則使用 dir 步驟
-            if (repoTargetDir) {
-                script.echo "Creating/entering directory: ${repoTargetDir}"
-                script.dir(repoTargetDir) { // 進入指定資料夾
-                    script.checkout(gitCommandParams)
-                }
-            } else {
-                // 如果沒有指定目標資料夾，直接在當前目錄 (通常是工作空間根目錄) 下克隆
-                // GitSCM 預設會以倉庫名稱創建資料夾
-                script.checkout(gitCommandParams)
-            }
+            gitCommandParams.extensions = [
+                [$class: 'GitLFSPull'],
+                [$class: 'DisableRemotePoll'],
+                [$class: 'CheckoutOption', timeout: 30], 
+                [$class: 'CloneOption', noTags: false, reference: '', shallow: false, timeout: 30],
+                [$class: 'CleanCheckout', deleteUntrackedNestedRepositories: true],
+                [$class: 'CleanBeforeCheckout', deleteUntrackedNestedRepositories: true],  
+                [$class: 'RelativeTargetDirectory', relativeTargetDir: repoTargetDir]
+            ]
+
+            gitCommandParams.gitTool = 'jgit'
+            gitCommandParams.changelog = needPoll
+            gitCommandParams.poll = needPoll
+
+            script.checkout(gitCommandParams)
+
             script.echo "Repository ${repoUrl} checked out successfully."
         }
         script.echo "All specified repositories processed."
