@@ -1,7 +1,6 @@
 def call(Map config = [:]) {
-    pipeline {
         agent {
-            label 'windows_2'
+            label 'windows'
         }
 
         parameters {
@@ -46,5 +45,4 @@ def call(Map config = [:]) {
                 }
             }
         }
-    }
 }
