@@ -16,7 +16,7 @@ def call(Map config = [:]) {
                 }
         }
 
-        stage('Build') {{
+        stage('Build') {
                 echo "Doing your custom build for ${params.TARGET}"
         }  
 
