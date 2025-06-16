@@ -1,5 +1,4 @@
 def call(Map config = [:]) {
-        stages {
             stage('Checkout Repos') {
                 steps {
                     script {
@@ -39,5 +38,4 @@ def call(Map config = [:]) {
                     }
                 }
             }
-        }
 }
