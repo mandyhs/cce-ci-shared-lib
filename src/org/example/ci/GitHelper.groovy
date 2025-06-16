@@ -8,11 +8,7 @@ class GitHelper implements Serializable {
     }
 
     def checkoutRepos(List repos, String branch) {
-        echo "Checking out repositories on branch ${branch}: ${repos.join(', ')}"
-        if (repos.isEmpty()) {
-            echo "No repositories provided to checkout."
-            return
-        }
+
         repos.each { repo ->
             def dirName = repo.tokenize('/').last().replaceAll('.git$', '')
             script.dir(dirName) {
