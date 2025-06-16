@@ -8,9 +8,6 @@ class FileMover implements Serializable {
     }
 
     def moveStuff() {
-        script.sh '''
-        mkdir -p workspace/merged
-        cp */build/output/*.jar workspace/merged/ || true
-        '''
+        script.echo "Starting file moving process...
     }
 }
