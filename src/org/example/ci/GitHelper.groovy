@@ -60,3 +60,4 @@ class GitHelper implements Serializable {
         }
         script.echo "All specified repositories processed."
     }
+}
