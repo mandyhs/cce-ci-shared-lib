@@ -7,6 +7,7 @@ def call(Map config = [:]) {
                         def branch = config.get('branch', 'main')
                         def gitHelper = new org.example.ci.GitHelper(this)
                         gitHelper.checkoutRepos(repos, branch)
+                        echo "Checked out repositories: ${repos.join(', ')} on branch: ${branch}"
                     }
                 }
             }
