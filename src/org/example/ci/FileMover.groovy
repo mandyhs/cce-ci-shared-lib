@@ -8,6 +8,6 @@ class FileMover implements Serializable {
     }
 
     def moveStuff() {
-        script.echo "Starting file moving process...
+        script.echo "Starting file moving process..."
     }
 }
